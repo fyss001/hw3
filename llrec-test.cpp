@@ -69,7 +69,9 @@ void dealloc(Node* head)
 
 
 
-
+bool removeodd(int x){
+    return x%2;
+}
 
 int main(int argc, char* argv[])
 {
@@ -84,12 +86,16 @@ int main(int argc, char* argv[])
     Node* head = readList(argv[1]);
     cout << "Original list: ";
     print(head);
-
+    //head=nullptr;
+    Node* small;
+    Node* big;
+    llpivot(head,small,big,8);
+    cout<<"???"<<endl;
+    print(small);
+    print(big);
+    dealloc(small);
+    dealloc(big);
     // Test out your linked list code
-
-
-
-    
     return 0;
 
 }

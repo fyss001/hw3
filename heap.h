@@ -2,7 +2,7 @@
 #define HEAP_H
 #include <functional>
 #include <stdexcept>
-
+#include <vector>
 template <typename T, typename PComparator = std::less<T> >
 class Heap
 {
@@ -21,7 +21,7 @@ public:
   * @brief Destroy the Heap object
   * 
   */
-  ~Heap();
+  ~Heap(){ }
 
   /**
    * @brief Push an item to the heap
@@ -61,14 +61,28 @@ public:
 
 private:
   /// Add whatever helper functions and data members you need below
-
-
-
-
+  std::vector<T> heap;
+  void heapify(size_t loc);
+  int aryness;
+  PComparator compare;
 };
 
 // Add implementation of member functions here
+template <typename T, typename PComparator>
+Heap<T,PComparator>::Heap(int m, PComparator c){
+  aryness=m;
+  compare = c;
+}
 
+template <typename T, typename PComparator>
+bool Heap<T,PComparator>::empty() const{
+  return heap.empty();
+}
+
+template <typename T, typename PComparator>
+size_t Heap<T,PComparator>::size() const{
+  return heap.size();
+}
 
 // We will start top() for you to handle the case of 
 // calling top on an empty heap
@@ -81,14 +95,11 @@ T const & Heap<T,PComparator>::top() const
     // ================================
     // throw the appropriate exception
     // ================================
-
-
+    throw std::underflow_error("The heap is empty.");
   }
   // If we get here we know the heap has at least 1 item
   // Add code to return the top element
-
-
-
+  return heap[0];
 }
 
 
@@ -101,14 +112,41 @@ void Heap<T,PComparator>::pop()
     // ================================
     // throw the appropriate exception
     // ================================
-
-
+    throw std::underflow_error("The heap is empty.");
   }
-
-
-
+  heap[0] = heap.back();
+  heap.pop_back();
+  if(!empty()) heapify(0);
+}
+template <typename T, typename PComparator>
+void Heap<T,PComparator>::heapify(size_t loc){
+  if(loc>size()-1) return;
+  size_t betterchild=(loc*aryness)+1;
+  if(betterchild>=size()) return;
+  for(size_t i=(loc*aryness)+2;i<=(loc+1)*aryness;i++){
+    if(i>size()-1) break;
+    if(compare(heap[i], heap[betterchild])) betterchild=i;
+  }
+  if(compare(heap[betterchild], heap[loc])){
+    std::swap(heap[betterchild], heap[loc]);
+    heapify(betterchild);
+  }
 }
 
+template <typename T, typename PComparator>
+void Heap<T,PComparator>::push(const T& item){
+  heap.push_back(item);
+  int ind=heap.size()-1;
+  while(ind!=0){
+    int next=(ind-1)/aryness;
+    if(compare(heap[ind],heap[next])){
+      std::swap(heap[ind],heap[next]);
+      ind=next;
+    }else{
+      break;
+    }
+  }
+}
 
 
 #endif
